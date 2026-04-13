@@ -70,9 +70,11 @@ def _build_graph(script: ScriptDirectory) -> Tuple[Dict[str, RevisionNode], Dict
     nodes: Dict[str, RevisionNode] = {}
     parents: Dict[str, List[str]] = {}
     children: Dict[str, List[str]] = defaultdict(list)
+
     revisions = list(script.walk_revisions(base='base', head='heads'))
-    head_ids = {rev.revision for rev in script.get_revisions('heads')}
-    base_ids = {rev.revision for rev in script.get_bases()}
+    head_ids = set(script.get_heads())
+    base_ids = set(script.get_bases())
+
     for rev in revisions:
         down_revs = _normalize_down_revisions(rev)
         nodes[rev.revision] = RevisionNode(
@@ -82,12 +84,6 @@ def _build_graph(script: ScriptDirectory) -> Tuple[Dict[str, RevisionNode], Dict
             is_head=rev.revision in head_ids,
         )
         parents[rev.revision] = down_revs
-    for child, down_revs in parents.items():
-        for parent in down_revs:
-            children[parent].append(child)
-    for key in children:
-        children[key] = sorted(set(children[key]))
-    return nodes, parents, children
 
 
 def _collect_bases(nodes: Dict[str, RevisionNode]) -> List[str]:
