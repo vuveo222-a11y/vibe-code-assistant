@@ -70,7 +70,6 @@ def _normalize_down_revisions(rev) -> List[str]:
         return [x for x in dr if x]
     return [dr]
 
-
 def _build_graph(script: ScriptDirectory) -> Tuple[Dict[str, RevisionNode], Dict[str, List[str]], Dict[str, List[str]]]:
     nodes: Dict[str, RevisionNode] = {}
     parents: Dict[str, List[str]] = {}
@@ -89,6 +88,13 @@ def _build_graph(script: ScriptDirectory) -> Tuple[Dict[str, RevisionNode], Dict
             is_head=rev.revision in head_ids,
         )
         parents[rev.revision] = down_revs
+
+    for rev_id, parent_ids in parents.items():
+        for parent_id in parent_ids:
+            children[parent_id].append(rev_id)
+
+    return nodes, parents, children
+
 
 
 def _collect_bases(nodes: Dict[str, RevisionNode]) -> List[str]:
