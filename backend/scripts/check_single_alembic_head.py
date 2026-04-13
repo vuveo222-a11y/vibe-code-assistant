@@ -10,7 +10,12 @@ from typing import Dict, Iterable, List, Set, Tuple
 
 from alembic.config import Config
 from alembic.script import ScriptDirectory
+from dataclasses import dataclass
 
+@dataclass
+class ValidationResult:
+    ok: bool
+    message: str
 
 @dataclass
 class RevisionNode:
@@ -214,7 +219,6 @@ def main() -> int:
             safe_msg = f'{type(exc).__name__}: {exc}'.replace('\n', ' ')
             print(f'::error title=Alembic lineage validator crash::{safe_msg}')
         return 2
-
 
 if __name__ == '__main__':
     raise SystemExit(main())
