@@ -95,6 +95,7 @@ jobs:
             echo "No dependency manifest found in backend/"
             exit 1
           fi
+          which alembic || (echo "Alembic CLI not found" && exit 1)
           python - <<'PY'
           import importlib.util
           mods = ["alembic", "sqlalchemy"]
